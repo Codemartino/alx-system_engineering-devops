@@ -1,30 +1,24 @@
 #!/usr/bin/env bash
-#
-# To infinity and beyond...
-# Write PID to pidfile (default '/var/run/holbertonscript.pid')
-# Remove pidfile and exit upon receiving SIGTERM or SIGQUIT
+# Does the following:
+#   Create a file /var/run/myscript.pid containing the script PID.
+#   Displays "To infinity and beyond" indefinitely
+#   Displays "I hate the kill command" upon receiving a SIGTERM
+#   Displays "Y U no love me?!" upon receiving a SIGINT
+#   Deletes the file /var/run/myscript.pid and terminates upon
+#+  receiving a SIGQUIT or SIGTERM.
 
-sleep() {
-  ! read -rt "$1"
-} <> <(:)
+terminator() {
+  rm /var/run/myscript.pid
+  exit
+}
 
-echo "$$" >| "${pidfile:=/var/run/holbertonscript.pid}"
-
-trap '
-  echo "Y U no love me?!"
-' INT
-trap '
-  rm -f "${pidfile}" 2>/dev/null
-  exit 131
-' QUIT
-trap '
-  echo "I hate the kill command"
-  rm -f "${pidfile}" 2>/dev/null
-  exit 143
-' TERM
+echo "$$" > /var/run/myscript.pid
 
 while true
 do
-  echo 'To infinity and beyond'
+  echo "To infinity and beyond"
   sleep 2
+  trap 'echo "Y U no love me?!"' SIGINT
+  trap 'echo "I hate the kill command" && terminator' SIGTERM
+  trap 'terminator' SIGQUIT
 done
