@@ -1,0 +1,7 @@
+
+# Connects to server 35.153.98.17 with key in ~/.ssh/school
+
+ssh -i ~/.ssh/school ubuntu@18.207.236.169
+
+
+
