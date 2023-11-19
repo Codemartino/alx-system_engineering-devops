@@ -1,4 +1,12 @@
-emoved limits for user 'holberton'
-exec {'sed -E -i \'s/^holberton\>/#&/\' /etc/security/limits.conf':
-  path => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin'
+# Fix problem of high amount files opened
+
+exec {'replace-1':
+  provider => shell,
+  command  => 'sudo sed -i "s/nofile 5/nofile 50000/" /etc/security/limits.conf',
+  before   => Exec['replace-2'],
+}
+
+exec {'replace-2':
+  provider => shell,
+  command  => 'sudo sed -i "s/nofile 4/nofile 40000/" /etc/security/limits.conf',
 }
