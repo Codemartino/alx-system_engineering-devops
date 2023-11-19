@@ -1,10 +1,12 @@
-# Increase file descriptor limit for NGINX
+# Fix problem of high amount of requests
 
-service {'nginx':
-  ensure => running
+exec {'replace':
+  provider => shell,
+  command  => 'sudo sed -i "s/ULIMIT=\"-n 15\"/ULIMIT=\"-n 4096\"/" /etc/default/nginx',
+  before   => Exec['restart'],
 }
 
-exec {'sed -E -i \'s/^(ULIMIT=.*-n)[ \t]+[0-9]+\>/\1 1024/\' /etc/default/nginx':
-  path   => '/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin',
-  notify => Service['nginx']
+exec {'restart':
+  provider => shell,
+  command  => 'sudo service nginx restart',
 }
